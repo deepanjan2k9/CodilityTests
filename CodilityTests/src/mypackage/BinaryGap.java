@@ -27,21 +27,31 @@ N is an integer within the range [1..2,147,483,647].
 
 package mypackage;
 
+import java.util.ArrayList;
 
 public class BinaryGap {
 	int binaryGap;
+	//to keep track of encountered one's
+	boolean flag;
 	
+	//to keep track of 0's in binary gaps
+	int zeroCounter;
+	
+	//Constructor
+	public BinaryGap() {
+		this.binaryGap = 0;
+		flag = false;
+		zeroCounter = 0;
+	}
+	
+	//getters and setters
 	public int getBinaryGap() {
 		return binaryGap;
 	}
-	
 	public void setBinaryGap(int binaryGap) {
 		this.binaryGap = binaryGap;
 	}
 	
-	public BinaryGap() {
-		this.binaryGap = 0;
-	}
 	
 	/**
 	 * Helper method to convert integer to binary string format.
@@ -51,18 +61,25 @@ public class BinaryGap {
 		return Integer.toBinaryString(N);
 	}
 	
-	public String preprocessBinary(String bits) {
-		String bitsTemp = null;
-		int bitsLength = bits.length();
-		for(int i=bits.length()-1; i>=0; i--) {
-			if (bits.charAt(i) == '0') {
-				bitsLength--;
-				bitsTemp = bits.substring(0, bitsLength);
-			} else continue;
+	
+	/**
+	 * Create an integer array that stores the binary form
+	 * taken from string binary form. Return this integer array 
+	 * to Solution()
+	 * */
+	public int[] Preprocess(String bits) {
+		int len = bits.length();
+		int[] a = new int[len];
+		
+		for(int i=0; i<len; i++) {
+			a[i] = Integer.parseInt(String.valueOf(bits.charAt(i)));
+		}
+		System.out.println("Array a in Preprocess: ");
+		for(int i=0; i<a.length; i++) {
+			System.out.print(a[i] + " ");
 		}
 		
-		System.out.println("Preprocessed binary: " + bitsTemp);
-		return bitsTemp;
+		return a;
 	}
 	
 	/**
@@ -72,49 +89,80 @@ public class BinaryGap {
 	 * therefore a total of O(n) + O(log n), capping at O(n)
 	 * */
 	public int Solution(int N) {
-		//convert integer to binary in string format
-		String bits = toBinary(N);
+		int[] binaryInt = Preprocess(Integer.toBinaryString(N));
+		int len = binaryInt.length;
 		
-		//preprocessing the binary to remove trailing 0's
-		String bitsTemp = preprocessBinary(bits);
+		//ArrayList to store the number of consecutive 0's in between two 1's
+		ArrayList<Integer> binaryGaps = new ArrayList<>();
 		
-		System.out.println("Bits: " + bits);
-		System.out.println("BitsTemp: " + bitsTemp);
-		int[] binaryGapArray = new int[32];
-		int oneCounter = 0;
-		for(int i=0; i < bitsTemp.length(); i++) {
-			if(bitsTemp.charAt(i) == '1') {
-				oneCounter++;
-			} else {
-				binaryGapArray[oneCounter]++;
+		//loop starts from the end to account for trailing 0's
+		for(int i=len-1; i>=0; i--) {
+			if(binaryInt[i] == 1) {
+				/*
+				 * flag is true in case the loop has already encountered at least one 1
+				 * by this time, in which case when it encounters 1 again at this iteration,
+				 * it will reset zeroCounter, because flag stays true throughout, beginning the
+				 * first time loop encounters a 1. The value of zeroCounter at this point will
+				 * be stored in an ArrayList binaryGaps to store different values of binary
+				 * gaps.
+				 * 
+				 * flag is false when the loop has not encountered a 1 before, and this is 
+				 * the first time it is encountering, at which point flag is set to true.  
+				 * 
+				 * 
+				 * The flag thus helps us determine if 0's encountered at the current iteration
+				 * should be counted towards binary gap. When loop encounters a 0 and the flag is 
+				 * false, then 1 has not been encountered before, meaning the current 0 is a 
+				 * trailing zero and should not be counted towards binary gap. 
+				 * */
+				if(flag) {
+					binaryGaps.add(zeroCounter);
+					//reset zeroCounter
+					zeroCounter = 0;
+					//oneCounter++;
+				}else {
+					flag = true;
+				}
+				
+			}
+			if(binaryInt[i] == 0) {
+				if(flag) {
+					zeroCounter++;
+				}else {
+					//do nothing
+				}
 			}
 		}
 		
-		
-		//checking for the case when there is no 1 at the end
-		//of the binary string, therefore no binary gap even
-		//if there are 0's.
-		if(oneCounter == 1|| oneCounter == 0) {
-			return 0;
+		//find out the max value in the ArrayList
+		int maxBinaryGap = 0;
+		for(int i=0; i<binaryGaps.size(); i++) {
+			//
+			if(maxBinaryGap < binaryGaps.get(i)) {
+				maxBinaryGap = binaryGaps.get(i);
+			}	
 		}
 		
-		int max = binaryGapArray[0];
-		for(int i=1; i<binaryGapArray.length; i++) {
-			if(max < binaryGapArray[i]) {
-				max = binaryGapArray[i];
-			}
-		}
-		
-		return max;
+		return maxBinaryGap;	
 	}
 
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
 		
 		//N is the integer to be converted to binary
-		int N=114;
+		/*
+		 * NOTE: The integer to string binary does not show 0's at the beginning
+		 * Test cases:
+		 * N=114 (1110010), expected=2, result=2; PASS
+		 * N=1 (1), expected=0, result=0; 		PASS
+		 * N=10000 (10011100010000), expected=3, result=3; PASS
+		 * N=39 (100111), expected=2, result=2; PASS
+		 * N=57 (111001), expected=2, result=2; PASS
+		 * N=2147483647 (1111111111111111111111111111111), expected=0, result=0; PASS
+		 * */
+		int N=2147483647;
 		BinaryGap bg = new BinaryGap();
-		System.out.println("Max binary gap: " + bg.Solution(N));
+		System.out.println("\nMax binary gap: " + bg.Solution(N));
 	}
 
 }
