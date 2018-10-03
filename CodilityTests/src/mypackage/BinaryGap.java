@@ -84,9 +84,7 @@ public class BinaryGap {
 	
 	/**
 	 * Method to calculate binary gap. 
-	 * Runs in O(n) for for-loop and O(log n) for 
-	 * Integer.toBinaryString() by helper method,
-	 * therefore a total of O(n) + O(log n), capping at O(n)
+	 * 
 	 * */
 	public int Solution(int N) {
 		int[] binaryInt = Preprocess(Integer.toBinaryString(N));
@@ -119,7 +117,6 @@ public class BinaryGap {
 					binaryGaps.add(zeroCounter);
 					//reset zeroCounter
 					zeroCounter = 0;
-					//oneCounter++;
 				}else {
 					flag = true;
 				}
