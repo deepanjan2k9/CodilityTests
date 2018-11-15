@@ -74,7 +74,8 @@ public class BinaryGap {
 		for(int i=0; i<len; i++) {
 			a[i] = Integer.parseInt(String.valueOf(bits.charAt(i)));
 		}
-		System.out.println("Array a in Preprocess: ");
+		//stdout for debugging purposes
+		System.out.println("\nArray a in Preprocess: ");
 		for(int i=0; i<a.length; i++) {
 			System.out.print(a[i] + " ");
 		}
@@ -157,7 +158,7 @@ public class BinaryGap {
 		 * N=57 (111001), expected=2, result=2; PASS
 		 * N=2147483647 (1111111111111111111111111111111), expected=0, result=0; PASS
 		 * */
-		int N=2147483647;
+		int N=1024;
 		BinaryGap bg = new BinaryGap();
 		System.out.println("\nMax binary gap: " + bg.Solution(N));
 	}
