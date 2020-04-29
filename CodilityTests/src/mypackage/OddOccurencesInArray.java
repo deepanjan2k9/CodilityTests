@@ -20,7 +20,8 @@ package mypackage;
         OddOccurencesInArray obj = new OddOccurencesInArray();
         
         //Instantiate array
-        int[] array = new int[] {3,2,4,0,0,4,0,3,4,0,4};
+        //int[] array = new int[] {3,2,4,0,0,4,0,3,4,0,4};
+        int[] array = new int[] {9,3,9,3,9,7,9};
         System.out.println("Displaying array - ");
         
         for(int num:array){ 
@@ -54,38 +55,20 @@ package mypackage;
 
         //outer most loop to count for each distinct element
         for(int i=0; i<arrayLength; i++){
-            if(A[i] == -1 ){//element already marked. Proceed to next iteration.
-                continue;
-            }
             num = A[i];
-            
-            occurences++; //initially encountering a number is one occurence
-            
-            //look for more occurences for num
-            for (int j=i+1; j<arrayLength; j++){
-                if(A[j] == -1){ //element already marked. Proceed to next iteration.
-                    continue;
-                }
-                
-                if(A[j] == num) {//increment occurences
-                    occurences++; 
-                }
-                if((occurences != 0)&&(occurences%2 == 0)){
-                    A[i] = -1;
-                    A[j] = -1;  
-                    occurences = 0;//reset occurences  
+            //inner loop to run comparisons against current num value
+            for(int j=0; j<arrayLength; j++){
+                if(A[j] == num){
+                    occurences++;
                 }
             }
-            //check whether occurences for num is even or odd
-            //even occurence means num has pair(s)
-            //odd means num does not have a pair
-            if(occurences%2 == 0){
-                //reset occurences and move on to the next element
-                occurences = 0;
-            }
-            else {
-                //num's occurence is odd, therefore it is the answer
+
+            //if occurrences for current num is odd, then it is the answer
+            if(occurences%2 != 0){
                 return num;
+            }
+            else {//current num has pair, so reset occurrence
+                occurences = 0;
             }
         }
 
